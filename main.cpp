@@ -35,9 +35,9 @@ void HandleMouseInput() {
 			if (grid[x][y].type == None) {
 				StopSound(sounds[0]);
 				PlaySound(sounds[0]);
+				RegenPath();
 			}
 			grid[x][y].type = Wall;
-			RegenPath();
 		}
 	}
 	if (IsMouseButtonPressed(1)) {
