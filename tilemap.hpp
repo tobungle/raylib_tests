@@ -10,11 +10,10 @@ enum TileType {
 };
 
 struct Tile {
-	int x;
+	int x;	// Tile info
 	int y;
 	TileType type;
-	// Pathfinding helper stuff. Could be removed later
-	float g_cost;
+	float g_cost;	// Pathfinding helper stuff
 	float h_cost;
 	float f_cost;
 	Tile* came_from;

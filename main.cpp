@@ -26,7 +26,6 @@ void RegenPath() {
 		grid[point1.x][point1.y], 
 		grid[point2.x][point2.y]);
 	}
-	
 }
 
 void DrawAStarPath() {
@@ -116,7 +115,6 @@ int main(void) {
 		DrawTilemap();
 		DrawAStarPath();
 		DrawText("[LMB] Draw tile\n[RMB] Clear tiles\n[MMB] Create navigation point", 10, screen_height - 70, 20, BLACK);
-		DrawLinePlot(0, 0, GetMouseX() / tile_size, GetMouseY() / tile_size);
 		EndDrawing();
 	}
 	UnloadAssets();

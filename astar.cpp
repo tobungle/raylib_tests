@@ -17,7 +17,6 @@ int GetLowestFCost(std::vector<Tile*> &tiles) {
 }
 
 std::vector<Tile> ReconstructPath(Tile end) {
-	std::cout << "Final tile came from: " << end.came_from << std::endl;
 	Tile current = end;
 	std::vector<Tile> path;
 	while (current.came_from != nullptr) {
@@ -28,55 +27,39 @@ std::vector<Tile> ReconstructPath(Tile end) {
 }
 
 std::vector<Tile> CreateAStarPath(Tile &start, Tile &end) {
-	// Initialise lists
-	std::vector<Tile*> open_list = { &start };
+	std::vector<Tile*> open_list = { &start };	// Initialise open & closed lists
 	std::vector<Tile*> closed_list;
-	// Initialise starting tile properties
-	start.g_cost = 0;
+	start.g_cost = 0;	// Initialise starting tile properties
 	start.h_cost = HeuristicDistance(start, end);
 	start.f_cost = start.g_cost + start.f_cost;
 	start.came_from = nullptr;
-	
 	while (!open_list.empty()) {
-		// Get tile with lowest f_cost
-		Tile* current = open_list[GetLowestFCost(open_list)];
-		std::cout << "A*: Evaluating tile " << current->x << " " << current->y << std::endl;
-		// Check if we've reached the goal
-		if (CompareTiles(*current, end)) {
-			std::cout << "Found A* path!" << std::endl;
+		Tile* current = open_list[GetLowestFCost(open_list)];	// Evaluate tile with lowest f_cost in open_list
+		if (CompareTiles(*current, end)) {	// Check if we're at the goal, if so then we're done
+			std::cout << "A*: Found path!" << std::endl;
 			return ReconstructPath(*current);
 		}
-		// Move current node from open_list to closed_list
-		open_list.erase(open_list.begin() + TileAt(open_list, *current));
+		open_list.erase(open_list.begin() + TileAt(open_list, *current));	// Move current node from open_list to closed_list
 		closed_list.push_back(current);
-		// Check all neighbouring tiles
 		std::vector<Tile*> cur_neighbours = GetNeighboursNoDiagonals(*current);
-		for (Tile* neighbour : cur_neighbours) {
-			std::cout << "A*: Evaluating neighbour " << neighbour->x << " " << neighbour->y << std::endl;
-			// Skip neighbour if it's in closed list
-			if (TileIn(closed_list, *neighbour)) {
-				std::cout << "A*: Skipping neighbour " << neighbour->x << " " << neighbour->y << " in closed list" << std::endl;
+		for (Tile* neighbour : cur_neighbours) {	// Checking all neighbouring tiles
+			if (TileIn(closed_list, *neighbour)) {	// Skip neighbour if it's in closed list
 				continue;
 			}
-			// Calculate g_cost
-			int tentative_g_cost = current->g_cost + 1;	// Tentative is a lovely word
-			
-			if (!TileIn(open_list, *neighbour)) {
+			int tentative_g_cost = current->g_cost + 1;	// Calculate g_cost
+			if (!TileIn(open_list, *neighbour)) {	// Add neighbour to open list
 				open_list.push_back(neighbour);
-				std::cout << "A*: Adding neighbour " << neighbour->x << " " << neighbour->y << " to open list" << std::endl;
 			}
 			else if (tentative_g_cost >= neighbour->g_cost) {
-				continue;	// This path is not better
+				continue;	// This path is not better, skip!
 			}
-			std::cout << "A*: Best neighbour found " << neighbour->x << " " << neighbour->y << std::endl;
-			// This is the best neighbour path so far, record it.
-			neighbour->came_from = current;
+			neighbour->came_from = current;	// This is the best path so far
 			neighbour->g_cost = tentative_g_cost;
 			neighbour->h_cost = HeuristicDistance(*neighbour, end);
 			neighbour->f_cost = neighbour->g_cost + neighbour->h_cost;
 		}
 	}
-	std::cout << "Could not find A* path. Sad!" << std::endl;
+	std::cout << "A*: Could not find path." << std::endl;
 	return std::vector<Tile> {};
 }
 
